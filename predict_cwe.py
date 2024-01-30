@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 from scipy.optimize import minimize
 import re
@@ -61,7 +63,7 @@ def constraint_function(x):
 def objective_function(x):
     return loss_function(x) + constraint_function(x)
 
-
+cwe_value = {}
 # 初始猜测值
 get_cp('data/707')
 initial_guess = np.zeros(len(nodes))
@@ -76,6 +78,9 @@ bounds = [(0, 5)] * len(nodes)
 result = minimize(objective_function, initial_guess, constraints=constraints, bounds=bounds)
 
 # 输出结果
-optimized_input = result.x.astype(int)
+optimized_input = result.x #.astype(float)
 for i, n in enumerate(nodes):
+    cwe_value[n] = optimized_input[i]
     print("{}:{}".format(n, optimized_input[i]))
+with open("data/cwe_value707.json", "w") as json_file:
+    json.dump(cwe_value, json_file)
