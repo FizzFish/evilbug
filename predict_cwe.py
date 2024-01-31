@@ -7,7 +7,8 @@ import re
 # 已知的节点对
 node_pairs = []  # 举例
 nodes = []
-known_nodes = {707: 2, 20: 3, 917: 5}
+# 反序列化502、表达式注入917、模板注入1336、代码注入94>命令注入78、文件上传434>SQL注入89
+known_nodes = {707: 2, 20: 3, 917: 5, 1336: 5, 94: 5, 78: 4, 89: 3}
 
 def get_cp(file_name):
     with open(file_name, 'r') as fd:
@@ -81,6 +82,7 @@ result = minimize(objective_function, initial_guess, constraints=constraints, bo
 optimized_input = result.x #.astype(float)
 for i, n in enumerate(nodes):
     cwe_value[n] = optimized_input[i]
-    print("{}:{}".format(n, optimized_input[i]))
+    # print("{}:{}".format(n, optimized_input[i]))
+cwe_value['avg'] = sum(cwe_value.values()) / len(cwe_value)
 with open("data/cwe_value707.json", "w") as json_file:
     json.dump(cwe_value, json_file)

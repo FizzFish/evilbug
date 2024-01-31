@@ -1,7 +1,7 @@
 import json
 import joblib
 
-# 可以使用训练好的模型进行预测
+# 从excel中提取数据
 xml_data = [['476', 'nautilus'], ['77', 'tenda'], ['77', 'totolink'], ['77', 'totolink'], ['77', 'totolink'],
             ['77', 'totolink']]
 
@@ -11,12 +11,14 @@ def base_score(test_data):
     bst, encoder, vendors = joblib.load('data/gbm.pkl')
     new_data = []
     for x in test_data:
+        # 以{pr: NONE, impact: HIGH}做数据补足
         item = ['NONE'] + x + ['HIGH']
         # if item[2] not in vendors:
         #     item[2] = 'unknown'
         new_data.append(item)
     data_encoded = encoder.transform(new_data)
     new_pred = bst.predict(data_encoded)
+    # print(f'gbm: {new_pred}')
     return new_pred
 
 
@@ -29,7 +31,7 @@ def modify_score(test_data):
         if cwe in values.keys():
             new_data.append(values[cwe])
         else:
-            new_data.append(2.5)
+            new_data.append(values['avg'])
     return new_data
 
 
