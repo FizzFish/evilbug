@@ -17,13 +17,6 @@ def from_sql(db_name, table_name):
     cursor.execute(query)
     data = cursor.fetchall()
 
-    # # 自定义排序函数
-    # def custom_sort(element):
-    #     # 将第3维数据为 "unknown" 的元素排在最前面
-    #     return (element[2] != 'unknown', element[2])
-    #
-    # # 使用 sorted 进行排序
-    # sorted_data = sorted(data, key=custom_sort)
     vendors = set([x[2] for x in data])
     return conn, data, vendors
 
@@ -57,7 +50,7 @@ def train_data(db_data):
     # 训练 LightGBM 模型
     num_round = 1000  # 迭代次数
     bst = lgb.train(params, train_data, valid_sets=[train_data, test_data], num_boost_round=1000,
-                    callbacks=[lgb.early_stopping(stopping_rounds=50)])
+                    callbacks=[lgb.early_stopping(stopping_rounds=500)])
     return encoder, bst
 
 
@@ -92,6 +85,6 @@ def train_from_table(table_name, file_name):
     close_db(conn)
 
 
-# train_from_table('cve707', 'data/gbm707.pkl')
+train_from_table('cve707', 'data/gbm707.pkl')
 train_from_table('cve693', 'data/gbm693.pkl')
 train_from_table('unique_cve', 'data/gbm.pkl')
